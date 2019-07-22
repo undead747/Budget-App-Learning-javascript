@@ -29,33 +29,33 @@ class UI {
       setTimeout(function () {
         self.budgetFeedback.classList.remove("showItem");
       }, 3000);
-    } else { 
+    } else {
       this.budgetAmount.textContent = budgetInput;
       this.budgetInput.value = '';
 
       this.showBalance(budgetInput);
-    }  
-    
+    }
+
   }
 
-  showBalance(budgetInput){
-    const expense = budgetInput - this.totalExpense();     
+  showBalance(budgetInput) {
+    const expense = budgetInput - this.totalExpense();
 
-    if(expense < 0){
-      this.balance.classList.remove('showBlack','showGreen');
+    if (expense < 0) {
+      this.balance.classList.remove('showBlack', 'showGreen');
       this.balance.classList.add('showRed');
-    } else if(expense === 0){
-      this.balance.classList.remove('showRed','showGreen');
+    } else if (expense === 0) {
+      this.balance.classList.remove('showRed', 'showGreen');
       this.balance.classList.add('showBlack');
     } else {
-      this.balance.classList.remove('showBlack','showRed');
+      this.balance.classList.remove('showBlack', 'showRed');
       this.balance.classList.add('showGreen');
     }
 
     this.balanceAmount.textContent = expense;
-  } 
-  
-  totalExpense(){
+  }
+
+  totalExpense() {
     let total = 100;
 
     return total;
@@ -64,40 +64,67 @@ class UI {
   submitExpenseForm() {
     const expenseInput = this.expenseInput.value;
     const amountInput = this.amountInput.value;
-    
+
     const self = this;
 
-    if(expenseInput === ''){
+    if (expenseInput === '') {
       this.expenseNameFeedback.classList.add('showItem');
       this.expenseNameFeedback.innerHTML = `<p>your expense name can't be empty</p>`;
-        
 
-      setTimeout(function(){
-          self.expenseNameFeedback.classList.remove("showItem"); 
-      },3000);
-    }else if(amountInput === '' || amountInput < 0){
+
+      setTimeout(function () {
+        self.expenseNameFeedback.classList.remove("showItem");
+      }, 3000);
+    } else if (amountInput === '' || amountInput < 0) {
       this.expenseValueFeedback.classList.add('showItem');
       this.expenseValueFeedback.innerHTML = `<p>your expense value can't be empty or negative</p>`;
-      
-      setTimeout(function(){
-         self.expenseValueFeedback.classList.remove('showItem'); 
-      },3000);
-    }else {
-        let amount = parseInt(amountInput);
-        this.expenseInput.value = '';
-        this.amountInput.value = '';
-        
-        let expense = {
-          id: this.itemID,
-          title: expenseInput,
-          amount: amount
-        }
-        
-        this.itemID++;
-        this.itemList.push(expense);
-        this.addExpense();  
+
+      setTimeout(function () {
+        self.expenseValueFeedback.classList.remove('showItem');
+      }, 3000);
+    } else {
+      let amount = parseInt(amountInput);
+      this.expenseInput.value = '';
+      this.amountInput.value = '';
+
+      let expense = {
+        id: this.itemID,
+        title: expenseInput,
+        amount: amount,
+      }
+
+      this.itemID++;
+      this.itemList.push(expense);
+      this.addExpense(expense);
     }
-     
+
+  }
+
+
+  addExpense(expense) {
+    const div = document.createElement('div');
+    div.classList.add('expense');
+    
+    div.innerHTML = `
+  <div class="expense-item d-flex justify-content-between align-items-baseline">
+
+  <h6 class="expense-title mb-0 text-uppercase list-item">${expense.title}</h6>
+  <h5 class="expense-amount mb-0 list-item">${expense.amount}</h5>
+
+  <div class="expense-icons list-item">
+
+   <a href="#" class="edit-icon mx-2" data-id="${expense.id}">
+    <i class="fas fa-edit"></i>
+   </a>
+   <a href="#" class="delete-icon" data-id="${expense.id}">
+    <i class="fas fa-trash"></i>
+   </a>
+  </div>
+ </div>    
+  
+  `;
+
+    this.expenseList.appendChild(div);
   }
 }
 
@@ -116,7 +143,7 @@ function eventListenters() {
 
   expenseForm.addEventListener('submit', function (event) {
     event.preventDefault();
-    
+
     ui.submitExpenseForm();
   })
 
