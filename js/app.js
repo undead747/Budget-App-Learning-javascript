@@ -29,7 +29,11 @@ class UI {
       setTimeout(function () {
         self.budgetFeedback.classList.remove("showItem");
       }, 3000);
-    }
+    } else { 
+      this.budgetAmount.textContent = budgetInput;
+      this.budgetInput.value = '';
+    }  
+    
   }
 
   submitExpenseForm() {
