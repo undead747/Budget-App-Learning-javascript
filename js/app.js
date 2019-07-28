@@ -28,23 +28,25 @@ class UI {
 
       setTimeout(function () {
         self.budgetFeedback.classList.remove("showItem");
-      }, 3000);
+      }, 2500);
     } else {
       this.budgetAmount.textContent = budgetInput;
       this.budgetInput.value = '';
 
-      this.showBalance(budgetInput);
+      this.showBalance();
     }
 
   }
 
-  showBalance(budgetInput) {
-    const expense = budgetInput - this.totalExpense();
+  showBalance() {
 
-    if (expense < 0) {
+    const expense = this.totalExpense();
+    const total = parseInt(this.budgetAmount.textContent) - expense;
+
+    if (total < 0) {
       this.balance.classList.remove('showBlack', 'showGreen');
       this.balance.classList.add('showRed');
-    } else if (expense === 0) {
+    } else if (total === 0) {
       this.balance.classList.remove('showRed', 'showGreen');
       this.balance.classList.add('showBlack');
     } else {
@@ -52,12 +54,21 @@ class UI {
       this.balance.classList.add('showGreen');
     }
 
-    this.balanceAmount.textContent = expense;
+    this.balanceAmount.textContent = total;
   }
 
   totalExpense() {
-    let total = 100;
-
+    let total = 0;
+    let itemList = this.itemList; 
+    
+    if(itemList.length > 0){
+        total = itemList.reduce((sum,obj,index, itemList) => {
+           return sum += obj.amount;  
+        },0)
+    }
+    
+    this.expenseAmount.textContent = total;
+    
     return total;
   }
 
@@ -74,14 +85,14 @@ class UI {
 
       setTimeout(function () {
         self.expenseNameFeedback.classList.remove("showItem");
-      }, 3000);
+      }, 2500);
     } else if (amountInput === '' || amountInput < 0) {
       this.expenseValueFeedback.classList.add('showItem');
       this.expenseValueFeedback.innerHTML = `<p>your expense value can't be empty or negative</p>`;
 
       setTimeout(function () {
         self.expenseValueFeedback.classList.remove('showItem');
-      }, 3000);
+      }, 2500);
     } else {
       let amount = parseInt(amountInput);
       this.expenseInput.value = '';
@@ -96,6 +107,7 @@ class UI {
       this.itemID++;
       this.itemList.push(expense);
       this.addExpense(expense);
+      this.showBalance();
     }
 
   }
