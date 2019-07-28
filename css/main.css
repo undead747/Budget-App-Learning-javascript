@@ -131,3 +131,12 @@ body {
 .expense-item {
   height: 2rem;
 }
+
+.language{
+  text-decoration: underline;
+  right: 10px;
+  position: absolute;
+}
+.icon-space{
+  margin-right: 10px; 
+}

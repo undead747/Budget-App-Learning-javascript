@@ -13,8 +13,15 @@ class UI {
     this.expenseInput = document.getElementById("expense-input");
     this.amountInput = document.getElementById("amount-input");
     this.expenseList = document.getElementById("expense-list");
+    this.languageChange = document.getElementById("language-change");
+
+    this.language = "English";
     this.itemList = [];
     this.itemID = 0;
+  }
+
+  setLanguage(value) {
+    this.language = value;
   }
 
   submitBudgetForm() {
@@ -22,13 +29,13 @@ class UI {
 
     if (budgetInput === '' || budgetInput < 0) {
       this.budgetFeedback.classList.add('showItem');
-      this.budgetFeedback.innerHTML = `<p>your budget can't be empty or negative </p>`;
-
+      if(this.language === "English") this.budgetFeedback.innerHTML = `<p>your budget can't be empty or negative </p>`;
+        else  this.budgetFeedback.innerHTML = `予算のインプットをブランクしないでください。`;
       const self = this;
 
       setTimeout(function () {
         self.budgetFeedback.classList.remove("showItem");
-      }, 2500);
+      }, 3000);
     } else {
       this.budgetAmount.textContent = budgetInput;
       this.budgetInput.value = '';
@@ -64,7 +71,7 @@ class UI {
     if (itemList.length > 0) {
       total = itemList.reduce((sum, obj, index, itemList) => {
         return sum += obj.amount;
-      }, 0)
+      }, 0) 
     }
 
     this.expenseAmount.textContent = total;
@@ -75,24 +82,29 @@ class UI {
   submitExpenseForm() {
     const expenseInput = this.expenseInput.value;
     const amountInput = this.amountInput.value;
-
+    
+    console.log(amountInput);
+    
     const self = this;
 
     if (expenseInput === '') {
       this.expenseNameFeedback.classList.add('showItem');
-      this.expenseNameFeedback.innerHTML = `<p>your expense name can't be empty</p>`;
-
+      if(this.language === "English") this.expenseNameFeedback.innerHTML = `<p>your expense name can't be empty</p>`;
+        else this.expenseNameFeedback.innerHTML = `<p>使用費タイトルのインプットをブランクしないでください。</p>`;  
 
       setTimeout(function () {
         self.expenseNameFeedback.classList.remove("showItem");
-      }, 2500);
-    } else if (amountInput === '' || amountInput < 0) {
-      this.expenseValueFeedback.classList.add('showItem');
-      this.expenseValueFeedback.innerHTML = `<p>your expense value can't be empty or negative</p>`;
+      }, 3000);
 
+    } else if (amountInput === '' || amountInput < 0) {
+
+      this.expenseValueFeedback.classList.add('showItem');
+      if(this.language === "English") this.expenseValueFeedback.innerHTML = `<p>your expense value can't be empty or negative</p>`;
+       else  this.expenseValueFeedback.innerHTML = `<p>使用費価値のインプットをブランクしなくて、０より大きく記入してください。</p>`;
       setTimeout(function () {
         self.expenseValueFeedback.classList.remove('showItem');
-      }, 2500);
+      }, 3000);
+
     } else {
       let amount = parseInt(amountInput);
       this.expenseInput.value = '';
@@ -139,30 +151,30 @@ class UI {
     this.expenseList.appendChild(div);
   }
 
-  editExpense(element){
+  editExpense(element) {
     let id = parseInt(element.dataset.id);
 
     let parent = element.parentElement.parentElement.parentElement;
-    
+
     this.expenseList.removeChild(parent);
 
     let expense = this.itemList.filter((item) => {
-           return item.id === id; 
-    }) 
-    
+      return item.id === id;
+    })
+
     this.expenseInput.value = expense[0].title;
     this.amountInput.value = expense[0].amount;
 
     let tempList = this.itemList.filter((item) => {
-           return item.id !== id;    
+      return item.id !== id;
     })
-    
+
     this.itemList = tempList;
     this.showBalance();
 
   }
 
-  deleteExpense(element){
+  deleteExpense(element) {
     let id = parseInt(element.dataset.id);
 
     let parent = element.parentElement.parentElement.parentElement;
@@ -170,9 +182,9 @@ class UI {
     this.expenseList.removeChild(parent);
 
     let expenseList = this.itemList.filter((item) => {
-      return item.id !== id; 
+      return item.id !== id;
     })
-    
+
     this.itemList = expenseList;
     this.showBalance();
 
@@ -183,6 +195,7 @@ function eventListenters() {
   const budgetForm = document.getElementById('budget-form');
   const expenseForm = document.getElementById('expense-form');
   const expenseList = document.getElementById('expense-list');
+  const languageChange = document.getElementById("language-change");
 
   const ui = new UI();
 
@@ -199,14 +212,22 @@ function eventListenters() {
   })
 
   expenseList.addEventListener('click', function (event) {
-     
-     let element = event.target.parentElement; 
 
-     if(element.classList.contains('edit-icon')){
-           ui.editExpense(element);         
-     } else if(element.classList.contains('delete-icon')) {
-           ui.deleteExpense(element);
-     }     
+    let element = event.target.parentElement;
+
+    if (element.classList.contains('edit-icon')) {
+      ui.editExpense(element);
+    } else if (element.classList.contains('delete-icon')) {
+      ui.deleteExpense(element);
+    }
+  })
+
+  languageChange.addEventListener('click', (event) => {
+    let element = event.target;
+
+    if (element.parentElement.classList.contains('language')) {
+      ui.setLanguage(element.dataset.language);
+    }
   })
 }
 
