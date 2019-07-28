@@ -59,16 +59,16 @@ class UI {
 
   totalExpense() {
     let total = 0;
-    let itemList = this.itemList; 
-    
-    if(itemList.length > 0){
-        total = itemList.reduce((sum,obj,index, itemList) => {
-           return sum += obj.amount;  
-        },0)
+    let itemList = this.itemList;
+
+    if (itemList.length > 0) {
+      total = itemList.reduce((sum, obj, index, itemList) => {
+        return sum += obj.amount;
+      }, 0)
     }
-    
+
     this.expenseAmount.textContent = total;
-    
+
     return total;
   }
 
@@ -116,7 +116,7 @@ class UI {
   addExpense(expense) {
     const div = document.createElement('div');
     div.classList.add('expense');
-    
+
     div.innerHTML = `
   <div class="expense-item d-flex justify-content-between align-items-baseline">
 
@@ -137,6 +137,45 @@ class UI {
   `;
 
     this.expenseList.appendChild(div);
+  }
+
+  editExpense(element){
+    let id = parseInt(element.dataset.id);
+
+    let parent = element.parentElement.parentElement.parentElement;
+    
+    this.expenseList.removeChild(parent);
+
+    let expense = this.itemList.filter((item) => {
+           return item.id === id; 
+    }) 
+    
+    this.expenseInput.value = expense[0].title;
+    this.amountInput.value = expense[0].amount;
+
+    let tempList = this.itemList.filter((item) => {
+           return item.id !== id;    
+    })
+    
+    this.itemList = tempList;
+    this.showBalance();
+
+  }
+
+  deleteExpense(element){
+    let id = parseInt(element.dataset.id);
+
+    let parent = element.parentElement.parentElement.parentElement;
+
+    this.expenseList.removeChild(parent);
+
+    let expenseList = this.itemList.filter((item) => {
+      return item.id !== id; 
+    })
+    
+    this.itemList = expenseList;
+    this.showBalance();
+
   }
 }
 
@@ -159,8 +198,15 @@ function eventListenters() {
     ui.submitExpenseForm();
   })
 
-  expenseList.addEventListener('submit', function (event) {
-    event.preventDefault();
+  expenseList.addEventListener('click', function (event) {
+     
+     let element = event.target.parentElement; 
+
+     if(element.classList.contains('edit-icon')){
+           ui.editExpense(element);         
+     } else if(element.classList.contains('delete-icon')) {
+           ui.deleteExpense(element);
+     }     
   })
 }
 
